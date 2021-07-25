@@ -6,3 +6,6 @@ button {
     background-color: yellowgreen;
     border-style: none;
 }
+.isActive {
+    background-color: darkred;
+}

@@ -1,57 +1,77 @@
 import timerMarkup from '../templates/timer.hbs';
 import button from '../templates/button.hbs';
+import timeMarkupUpdating from './time-markup-updating';
+import getDividedTime from './get-divided-time';
+import { btnActions, refs } from './variables';
 
-const btnActions = [{ name: 'start' }, { name: 'stop' }, { name: 'clear' }];
+document.querySelector('.date-input').insertAdjacentHTML('afterend', timerMarkup());
+document.querySelector('#timer-1').insertAdjacentHTML('afterend', button(btnActions));
+document.querySelector('[data-action=start]').disabled = true;
 
-document.querySelector('body').insertAdjacentHTML('afterbegin', button(btnActions));
-document.querySelector('body').insertAdjacentHTML('afterbegin', timerMarkup());
+class CountDown {
+  constructor({ onSecondChange, targetDate, selector }) {
+    this.intervalId = null;
+    this.targetDate = targetDate;
+    this.onSecondChange = onSecondChange;
+    this.selector = selector;
+  }
 
-function updateTimerMarkup({ days, hours, mins, secs }) {
-  const ddd = document.querySelector('[data-value=days]');
-  ddd.textContent = days;
-  const hhh = document.querySelector('[data-value=hours]');
-  hhh.textContent = hours;
-  const mmm = document.querySelector('[data-value=mins]');
-  mmm.textContent = mins;
-  const sss = document.querySelector('[data-value=secs]');
-  sss.textContent = secs;
+  startCountDown() {
+    document.querySelector('[data-action=start]').disabled = true;
+    document.querySelector('[data-action=pick-a-date]').disabled = true;
+    document.querySelector('[data-action=stop').disabled = false;
+    document.querySelector('[name=target-date]').disabled = true;
+    document.querySelector('[data-action=clear]').disabled = true;
+    document.querySelector('[data-action=start]').classList.add('isActive');
+
+    this.intervalId = setInterval(() => {
+      let time = this.targetDate() - Date.now();
+      let timeToDisplay = getDividedTime(time);
+      this.onSecondChange(timeToDisplay);
+    }, 1000);
+  }
+
+  stopCountDown() {
+    clearInterval(this.intervalId);
+    document.querySelector('[data-action=start]').disabled = false;
+    document.querySelector('[data-action=clear]').disabled = false;
+    document.querySelector('[data-action=start]').classList.remove('isActive');
+  }
 }
-let intervalId = null;
-const someDate = new Date('Jul 26, 2021');
 
-function timeFormat(timeDiff) {
-  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((timeDiff % (1000 * 60)) / 1000);
+document.querySelector('[data-action=pick-a-date').disabled = true;
+document.querySelector('[data-action=stop').disabled = true;
+document.querySelector('[data-action=clear').disabled = true;
 
-  return { days, hours, mins, secs };
-}
-
-document.querySelector('[data-action=start]').addEventListener('click', startTimer);
-
-document.querySelector('[data-action=stop').addEventListener('click', stopTimer);
-
-document.querySelector('[data-action=clear]').addEventListener('click', () => {
-  updateTimerMarkup({});
+document.querySelector('[name=target-date]').addEventListener('change', () => {
+  if (document.querySelector('[name=target-date]').value === '') {
+    document.querySelector('[data-action=pick-a-date').disabled = true;
+  }
+  document.querySelector('[data-action=pick-a-date').disabled = false;
 });
 
-function startTimer() {
-  document.querySelector('[data-action=start]').disabled = true;
-  document.querySelector('[data-action=start]').classList.add('isActive');
-  intervalId = setInterval(() => {
-    let time = someDate - Date.now();
-    let timeToDisplay = timeFormat(time);
-    updateTimerMarkup(timeToDisplay);
-    console.log(
-      `Days: ${timeToDisplay.days} | Hours: ${timeToDisplay.hours} | Minutes: ${timeToDisplay.mins} | Seconds: ${timeToDisplay.secs}`,
-    );
-  }, 1000);
+document.querySelector('[data-action=pick-a-date').addEventListener('click', () => {
+  document.querySelector('[data-action=start]').disabled = false;
+});
+
+function getTargetDate() {
+  document.querySelector('[name=target-date]').addEventListener('change', () => {});
+  return document.querySelector('[name=target-date]').valueAsNumber;
 }
 
-function stopTimer() {
-  clearInterval(intervalId);
-  document.querySelector('[data-action=start]').disabled = false;
-  document.querySelector('[data-action=start]').classList.remove('isActive');
-}
-// // clearInterval(intervalId);
+const countDown = new CountDown({ onSecondChange: timeMarkupUpdating, targetDate: getTargetDate });
+
+document
+  .querySelector('[data-action=start]')
+  .addEventListener('click', countDown.startCountDown.bind(countDown));
+
+document
+  .querySelector('[data-action=stop')
+  .addEventListener('click', countDown.stopCountDown.bind(countDown));
+
+document.querySelector('[data-action=clear]').addEventListener('click', () => {
+  timeMarkupUpdating({});
+  document.querySelector('[data-action=pick-a-date]').disabled = false;
+  document.querySelector('[data-action=start]').disabled = true;
+  document.querySelector('[name=target-date]').disabled = false;
+});

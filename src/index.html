@@ -4,14 +4,19 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homework 11.2 -- timer</title>
-    <link rel="stylesheet" href="./css/main.css" />
+    <title>Countdown timer</title>
   </head>
   <body>
-    <div class="date-input">
-      <input type="date" name="target-date" min="2021-07-27"/>
-      <button type="button" data-action="pick-a-date">Pick a date</button>
-    </div>
+    <input type="date" name="date-input" id="date-input" />
+    <button type="button" data-action="start" disabled="true">Start</button>
+    <button type="button" data-action="stop">Stop</button>
+    <button type="button" data-action="clear">Clear</button>
+
+    <p>TIMER</p>
+    <p class="days">DD:</p>
+    <p class="hours">HH:</p>
+    <p class="mins">MM:</p>
+    <p class="secs">SS:</p>
     <script src="./js/index.js"></script>
   </body>
 </html>

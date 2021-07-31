@@ -84,6 +84,7 @@ const timerIdChange = (timerID) => {
 
 refs.startBtn.addEventListener("click", () => {
   refs.startBtn.disabled = true;
+  refs.stopBtn.disabled = false;
   refs.targetDateFromCalendar.disabled = true;
   datePromise().then(timerIdPromise).then(timerIdChange);
 });
@@ -91,6 +92,7 @@ refs.startBtn.addEventListener("click", () => {
 refs.stopBtn.addEventListener("click", () => {
   clearInterval(timerId);
   refs.targetDateFromCalendar.disabled = false;
+  refs.startBtn.disabled = false;
 });
 
 refs.clearBtn.addEventListener("click", () => {
@@ -98,6 +100,7 @@ refs.clearBtn.addEventListener("click", () => {
   clearInterval(timerId);
   refs.targetDateFromCalendar.disabled = false;
   refs.startBtn.disabled = true;
+  refs.stopBtn.disabled = true;
   refs.days.textContent = `DAYS: >>>>> ${""}`;
   refs.hours.textContent = `HOURS (HH): >>>>> ${""}`;
   refs.mins.textContent = `MINUTES (MM): >>>>> ${""}`;
